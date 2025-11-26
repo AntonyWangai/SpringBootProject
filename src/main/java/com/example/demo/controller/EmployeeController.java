@@ -24,11 +24,23 @@ public class EmployeeController {
 		return "list-emps";
 	}
 	
-	@GetMapping("/AddEmployee")
+	@GetMapping("/addEmployee")
 	public String addEmployee(Model model) {
 		model.addAttribute("employee",new Employee());
 		return "employee-form";
 	}
+	@GetMapping("updateEmployee")
+	public String updateEmployee(@RequestParam("Id") int id, Model model) {
+		model.addAttribute("employee",empService.getEmployee(id));
+		return "employee-form";
+	}
+	@GetMapping("deleteEmployee")
+	public String deleteEmployee(@RequestParam("Id") int id, Model model) {
+		empService.deleteEmployee(id);
+		return "redirect:/employees";
+
+	}
+	
 	@PostMapping("/save")
 	public String saveStudent(@ModelAttribute("employee") Employee employee) {
 		empService.addEmployee(employee);

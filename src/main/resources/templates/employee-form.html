@@ -13,7 +13,8 @@
     <h2 class="mb-4">Employee Form</h2>
 
     <form th:action="@{/save}" th:object="${employee}" method="POST" class="border p-4 rounded shadow">
-
+		
+		<input type="hidden" th:field="*{id}">
         <div class="mb-3">
             <label for="firstName" class="form-label">First Name</label>
             <input id="firstName" th:field="*{first_name}" type="text" class="form-control">

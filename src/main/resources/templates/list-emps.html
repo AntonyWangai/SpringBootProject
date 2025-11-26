@@ -9,9 +9,9 @@
 
 <body class="p-3">
 
-    <h1 class="mb-3">SHOW EMPLOYEE DIRECTORY</h1>
+    <h1 class="mb-3">EMPLOYEE DIRECTORY</h1>
 
-    <a class="btn btn-primary mb-3" th:href="@{/AddEmployee}">Add Employees</a>
+    <a class="btn btn-primary mb-3" th:href="@{/addEmployee}">Add Employees</a>
 
     <table class="table table-bordered table-striped table-dark">
         <thead class="table-dark">
@@ -29,14 +29,16 @@
                 <td th:text="${emp.last_name}"></td>
                 <td th:text="${emp.email}"></td>
                 <td>
-                    <a th:href="@{/showFormForUpdate(employeeId=${emp.id})}"
+                    <a th:href="@{/updateEmployee(Id=${emp.id})}"
                        class="btn btn-info btn-sm">Update</a>
 
-                    <a th:href="@{/delete(employeeId=${emp.id})}"
+                    <a th:href="@{/deleteEmployee(Id=${emp.id})}"
                        class="btn btn-danger btn-sm"
-                       onclick="return confirm('Are you sure you want to delete this employee?')">
+                       onclick="confirm('Are you sure you want to delete this employee?')">
                         Delete
                     </a>
+                    <Button onclick="confirm('Are you sure you want to delete this employee?')"">
+                    Delete</Button>
                 </td>
             </tr>
         </tbody>
