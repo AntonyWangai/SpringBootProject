@@ -1,0 +1,38 @@
+package com.example.demo.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import com.example.demo.employee.Employee;
+import com.example.demo.service.EmpService;
+
+
+@Controller
+public class EmployeeController {
+
+	@Autowired
+	EmpService empService;
+	
+	@GetMapping("/employees")
+	public String  getAllEmployees(Model model){
+		List<Employee> myList = empService.getAllEmployees();
+		model.addAttribute("employees",myList);
+		return "list-emps";
+	}
+	
+	@GetMapping("/AddEmployee")
+	public String addEmployee(Model model) {
+		model.addAttribute("employee",new Employee());
+		return "employee-form";
+	}
+	@PostMapping("/save")
+	public String saveStudent(@ModelAttribute("employee") Employee employee) {
+		empService.addEmployee(employee);
+		return "redirect:/employees";
+	}
+	
+}
