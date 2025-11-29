@@ -19,7 +19,12 @@
     </form>
 </div>
 
-<a class="btn btn-primary mb-3" th:href="@{/addEmployee}">Add Employees</a>
+<a class="btn btn-primary mb-3"
+   th:if="${#authorization.expression('hasAnyRole(''MANAGER'',''ADMIN'')')}"
+   th:href="@{/addEmployee}">
+   Add Employees
+</a>
+
 
 <table class="table table-bordered table-striped table-dark">
     <thead class="table-dark">
@@ -36,16 +41,21 @@
             <td th:text="${emp.first_name}"></td>
             <td th:text="${emp.last_name}"></td>
             <td th:text="${emp.email}"></td>
-            <td>
-                <a th:href="@{/updateEmployee(Id=${emp.id})}"
-                   class="btn btn-info btn-sm">Update</a>
+           <td>
+    <!--visible for MANAGER & ADMIN -->
+    <a th:if="${#authorization.expression('hasAnyRole(''MANAGER'',''ADMIN'')')}"
+       th:href="@{/updateEmployee(Id=${emp.id})}"
+       class="btn btn-info btn-sm">Update</a>
 
-                <a th:href="@{/deleteEmployee(Id=${emp.id})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Are you sure you want to delete this employee?');">
-                    Delete
-                </a>
-            </td>
+    <!-- Delete: visible for ADMIN only -->
+    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+       th:href="@{/deleteEmployee(Id=${emp.id})}"
+       class="btn btn-danger btn-sm"
+       onclick="return confirm('Are you sure you want to delete this employee?');">
+        Delete
+    </a>
+</td>
+
         </tr>
     </tbody>
 </table>
