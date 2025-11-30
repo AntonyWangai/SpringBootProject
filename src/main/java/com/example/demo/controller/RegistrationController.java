@@ -27,8 +27,7 @@ public class RegistrationController {
         userService.register(user);
         return "redirect:/login?registered";  // After success go to login page
     }
-
-    // Show login page
+    //Show login
     @GetMapping("/login")
     public String showLoginPage(
             @RequestParam(value = "registered", required = false) String registered,
@@ -38,4 +37,6 @@ public class RegistrationController {
         }
         return "login";
     }
-}
+
+    }
+

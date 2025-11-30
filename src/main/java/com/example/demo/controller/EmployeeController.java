@@ -33,7 +33,7 @@ public class EmployeeController {
         model.addAttribute("employee", empService.getEmployee(id));
         return "employee-form";
     }
-
+  
     // Only MANAGER or ADMIN can add employees
     @GetMapping("/addEmployee")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")

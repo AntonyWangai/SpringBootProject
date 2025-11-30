@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Project</title>
@@ -18,12 +20,17 @@
         <button type="submit" class="btn btn-warning">Logout</button>
     </form>
 </div>
+<div class="mb-2">
+    Logged in as: <strong sec:authentication="principal.username"></strong>  
+    <span class="badge bg-info" sec:authentication="principal.authorities"></span>
+</div>
 
 <a class="btn btn-primary mb-3"
-   th:if="${#authorization.expression('hasAnyRole(''MANAGER'',''ADMIN'')')}"
+   sec:authorize="hasAnyRole('MANAGER','ADMIN')"
    th:href="@{/addEmployee}">
    Add Employees
 </a>
+
 
 
 <table class="table table-bordered table-striped table-dark">
@@ -41,20 +48,20 @@
             <td th:text="${emp.first_name}"></td>
             <td th:text="${emp.last_name}"></td>
             <td th:text="${emp.email}"></td>
-           <td>
-    <!--visible for MANAGER & ADMIN -->
-    <a th:if="${#authorization.expression('hasAnyRole(''MANAGER'',''ADMIN'')')}"
+          
+          <td>
+    <a sec:authorize="hasAnyRole('MANAGER','ADMIN')"
        th:href="@{/updateEmployee(Id=${emp.id})}"
        class="btn btn-info btn-sm">Update</a>
 
-    <!-- Delete: visible for ADMIN only -->
-    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+    <a sec:authorize="hasRole('ADMIN')"
        th:href="@{/deleteEmployee(Id=${emp.id})}"
        class="btn btn-danger btn-sm"
-       onclick="return confirm('Are you sure you want to delete this employee?');">
+       onclick="return confirm('Are you sure?');">
         Delete
     </a>
 </td>
+          
 
         </tr>
     </tbody>
