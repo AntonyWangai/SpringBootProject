@@ -1,37 +1,248 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — MyApp</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f2f6fc;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --primary: #0d6efd;
+      --accent: #6c8cff;
+      --elev: rgba(15,23,42,0.06);
+      --success: #16a34a;
+      --error: #ef4444;
+    }
+    [data-theme="dark"]{
+      --bg: #0b1220;
+      --card: #071023;
+      --muted: #9aa4b2;
+      --primary: #7aa2ff;
+      --accent: #9db9ff;
+      --elev: rgba(255,255,255,0.03);
+      --success: #34d399;
+      --error: #fb7185;
+    }
+
+    html,body{
+      min-height:100%;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1000px 600px at 90% 10%, rgba(108,140,255,0.04), transparent), var(--bg);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .app-header{ max-width:1100px; margin:22px auto 10px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{ width:46px; height:46px; display:inline-grid; place-items:center; border-radius:10px; box-shadow:0 6px 18px var(--elev); background:linear-gradient(135deg,var(--accent), var(--primary)); color:white; flex-shrink:0; }
+    .brand-title .name{ font-weight:700; color:var(--muted); }
+    .brand-title .tag{ font-size:12px; color:var(--muted); opacity:.7; }
+
+    .auth-wrap{ display:grid; place-items:center; min-height:calc(100vh - 160px); padding:18px; }
+    .auth-card{ width:100%; max-width:540px; background:var(--card); border-radius:14px; padding:22px; box-shadow: 0 10px 30px var(--elev); animation:pop 420ms cubic-bezier(.2,.9,.25,1); }
+    @keyframes pop { from { opacity:0; transform: translateY(10px) scale(.998) } to { opacity:1; transform:none } }
+    .h1-title{ font-size:20px; margin-bottom:6px; color:var(--muted); font-weight:700; }
+
+    .strength {
+      height:8px;
+      border-radius:6px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.02));
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .strength > i{
+      display:block;
+      height:100%;
+      width:0%;
+      transition: width .36s ease, background-color .36s;
+    }
+
+    .btn-primary{
+      background: linear-gradient(90deg,var(--primary),var(--accent));
+      border:none;
+      box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+      font-weight:600;
+    }
+
+    .muted{ color:var(--muted) }
+    .small{ font-size:13px }
+
+    @media (max-width:520px){
+      .auth-card{ padding:16px }
+      .logo{ width:44px; height:44px }
+    }
+  </style>
 </head>
+<body>
 
-<body class="container mt-5">
-
-<h2>Register</h2>
-	<div th:if="${param.registered}" class="alert alert-success">
-    Registration successful. Please log in.
-</div>
-	
-<form method="post" th:action="@{/addUser}" th:object="${user}" class="border p-4">
-
-    <div class="mb-3">
-        <label>Username</label>
-        <input th:field="*{username}" class="form-control" required>
+  <!-- Header -->
+  <header class="app-header" role="banner">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="21" height="21" rx="5" fill="white" opacity="0.06"/>
+          <path d="M6 12c1.333-4 9-4 10 0-1 2.5-4 3.5-5 4-1-1-4-3-5-4z" fill="white" opacity="0.95"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <div class="name">MyApp</div>
+        <div class="tag">Create your secure account</div>
+      </div>
     </div>
 
-    <div class="mb-3">
-        <label>Password</label>
-        <input th:field="*{password}" type="password" class="form-control" required>
+    <div class="d-flex align-items-center gap-2">
+      <button id="themeToggle" class="btn btn-sm toggle-btn" aria-pressed="false" title="Toggle dark mode">
+        <i id="themeIcon" class="bi bi-moon-fill" style="font-size:1.0rem"></i>
+      </button>
     </div>
+  </header>
 
-    <div class="mb-3">
-        <label>Confirm Password</label>
-        <input th:field="*{confirmPassword}" type="password" class="form-control" required>
-    </div>
+  <!-- Main -->
+  <main class="auth-wrap" role="main">
+    <section class="auth-card" aria-labelledby="registerTitle">
+      <h2 id="registerTitle" class="h1-title">Create account</h2>
+      <p class="muted small mb-3">Register with your preferred username and secure password.</p>
 
-    <button class="btn btn-primary">Register</button>
+      <div th:if="${param.registered}" class="alert alert-success">
+        Registration successful. Please log in.
+      </div>
 
-</form>
+      <form method="post" th:action="@{/addUser}" th:object="${user}" id="registerForm" novalidate autocomplete="on">
 
+        <div class="form-floating mb-3">
+          <input th:field="*{username}" id="username" class="form-control" placeholder="username" required autocomplete="username" />
+          <label for="username">Username</label>
+        </div>
+
+        <div class="form-floating mb-3 position-relative">
+          <input th:field="*{password}" id="password" type="password" class="form-control" placeholder="Password" required autocomplete="new-password" />
+          <label for="password">Password</label>
+          <button type="button" class="btn btn-sm btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2"
+                  aria-label="Show password" onclick="togglePassword('password', this)"><i class="bi bi-eye"></i></button>
+        </div>
+
+        <div class="form-text mb-2 small muted">Use at least 8 characters, mix letters and numbers.</div>
+        <div class="strength mb-2" aria-hidden="true"><i id="pwdBar"></i></div>
+
+        <div class="form-floating mb-3 position-relative">
+          <input th:field="*{confirmPassword}" id="confirmPassword" type="password" class="form-control" placeholder="Confirm Password" required autocomplete="new-password" />
+          <label for="confirmPassword">Confirm Password</label>
+          <button type="button" class="btn btn-sm btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2"
+                  aria-label="Show confirm password" onclick="togglePassword('confirmPassword', this)"><i class="bi bi-eye"></i></button>
+        </div>
+
+        <div id="pwdError" class="text-danger small mb-2" style="display:none;">Passwords do not match.</div>
+
+        <div class="mb-3">
+          <label class="form-check">
+            <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
+            <span class="form-check-label small muted">I agree to the <a th:href="@{/terms}" class="link-like">terms &amp; privacy</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 mb-2">Create account</button>
+
+        <div class="text-center small muted">
+          Already have an account?
+          <a th:href="@{/login}" class="link-like ms-1">Sign in</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Theme handling (shared code)
+    (function(){
+      const icon = document.getElementById('themeIcon');
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = stored || (prefersDark ? 'dark' : 'light');
+      if (initial === 'dark') document.documentElement.setAttribute('data-theme','dark');
+
+      function updateIcon(){
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        document.getElementById('themeToggle').setAttribute('aria-pressed', isDark);
+      }
+      updateIcon();
+      document.getElementById('themeToggle').addEventListener('click', ()=>{
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('theme','light');
+        } else {
+          document.documentElement.setAttribute('data-theme','dark');
+          localStorage.setItem('theme','dark');
+        }
+        updateIcon();
+      });
+    })();
+
+    // Password toggle
+    function togglePassword(id, btn){
+      const input = document.getElementById(id);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+      } else {
+        input.type = 'password';
+        btn.innerHTML = '<i class="bi bi-eye"></i>';
+      }
+    }
+
+    // Password strength meter (simple)
+    (function(){
+      const pwd = document.getElementById('password');
+      const bar = document.getElementById('pwdBar');
+      const confirm = document.getElementById('confirmPassword');
+      const error = document.getElementById('pwdError');
+      function strengthScore(s) {
+        if (!s) return 0;
+        let score = 0;
+        if (s.length >= 8) score += 1;
+        if (/[A-Z]/.test(s)) score += 1;
+        if (/[0-9]/.test(s)) score += 1;
+        if (/[\W_]/.test(s)) score += 1;
+        return score;
+      }
+      function applyBar(score){
+        const percent = (score/4)*100;
+        bar.style.width = percent + '%';
+        if (score <= 1) bar.style.background = 'var(--error)';
+        else if (score === 2) bar.style.background = '#f59e0b'; // amber
+        else if (score === 3) bar.style.background = 'var(--primary)';
+        else bar.style.background = 'var(--success)';
+      }
+      pwd && pwd.addEventListener('input', ()=>{
+        const s = strengthScore(pwd.value);
+        applyBar(s);
+        if (confirm && confirm.value) {
+          error.style.display = (confirm.value !== pwd.value) ? 'block' : 'none';
+        }
+      });
+
+      confirm && confirm.addEventListener('input', ()=> {
+        error.style.display = (confirm.value !== pwd.value) ? 'block' : 'none';
+      });
+
+      // Form submit check
+      const form = document.getElementById('registerForm');
+      form.addEventListener('submit', (e)=>{
+        if (pwd.value !== confirm.value) {
+          e.preventDefault();
+          error.style.display = 'block';
+          pwd.focus();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

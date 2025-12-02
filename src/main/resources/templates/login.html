@@ -1,37 +1,285 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — MyApp</title>
+
+  <!-- Google font + Bootstrap -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f2f6fc;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --primary: #0d6efd;
+      --elev: rgba(15,23,42,0.06);
+      --accent: #6c8cff;
+      --glass: rgba(255,255,255,0.6);
+      --success: #16a34a;
+      --error: #ef4444;
+    }
+    [data-theme="dark"]{
+      --bg: #0b1220;
+      --card: #071023;
+      --muted: #9aa4b2;
+      --primary: #7aa2ff;
+      --elev: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.04);
+      --accent: #9db9ff;
+      --success: #34d399;
+      --error: #fb7185;
+    }
+
+    html,body{
+      height:100%;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(108,140,255,0.06), transparent),
+                  var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:var(--muted);
+    }
+
+    /* Header */
+    .app-header{
+      max-width:1100px;
+      margin:28px auto 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      padding:0 12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:46px;
+      height:46px;
+      display:inline-grid;
+      place-items:center;
+      border-radius:10px;
+      box-shadow: 0 6px 18px var(--elev);
+      background: linear-gradient(135deg,var(--accent), var(--primary));
+      color:white;
+      flex-shrink:0;
+    }
+    .brand-title{
+      line-height:1;
+    }
+    .brand-title .name{
+      font-weight:700;
+      color:var(--muted);
+    }
+    .brand-title .tag{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      opacity:0.7;
+    }
+
+    /* Center card */
+    .auth-wrap{
+      display:grid;
+      place-items:center;
+      padding:18px;
+      min-height:calc(100vh - 160px);
+    }
+    .auth-card{
+      width:100%;
+      max-width:460px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.6), transparent);
+      background-color:var(--card);
+      border-radius:14px;
+      padding:22px;
+      box-shadow: 0 10px 30px var(--elev);
+      transform-origin:center;
+      animation:pop 420ms cubic-bezier(.2,.9,.25,1);
+      transition:box-shadow .2s, transform .18s;
+    }
+    @keyframes pop { from { opacity:0; transform: translateY(10px) scale(.998) } to { opacity:1; transform:none } }
+
+    h1.h{
+      margin-bottom:2px;
+      font-size:20px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    p.lead{
+      margin-bottom:18px;
+      color:var(--muted);
+      opacity:.84;
+      font-size:13px;
+    }
+
+    .form-floating > input:focus, .form-floating > textarea:focus {
+      box-shadow: 0 6px 18px var(--elev);
+      border-color: var(--primary);
+    }
+
+    .btn-primary{
+      background: linear-gradient(90deg,var(--primary),var(--accent));
+      border:none;
+      box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+      font-weight:600;
+    }
+
+    .toggle-btn{
+      background:transparent;
+      border:1px solid transparent;
+      color:var(--muted);
+    }
+
+    /* small helpers */
+    .muted { color:var(--muted); }
+    .small{font-size:13px}
+    .link-like{color:var(--primary); font-weight:600; text-decoration:none}
+
+    /* responsive */
+    @media (max-width:520px){
+      .app-header{ padding: 12px }
+      .auth-card{ padding:16px; border-radius:12px }
+      .logo{ width:44px; height:44px }
+    }
+  </style>
 </head>
+<body>
 
-<body class="container mt-5">
+  <!-- Header -->
+  <header class="app-header" role="banner">
+    <div class="brand">
+      <!-- Inline SVG placeholder logo (premium) -->
+      <div class="logo" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="21" height="21" rx="5" fill="white" opacity="0.06"/>
+          <path d="M6 12c1.333-4 9-4 10 0-1 2.5-4 3.5-5 4-1-1-4-3-5-4z" fill="white" opacity="0.95"/>
+        </svg>
+      </div>
 
-<h2>Login</h2>
-
-<!-- registration success message -->
-<div th:if="${message}" class="alert alert-success">
-    <span th:text="${message}"></span>
-</div>
-
-<form method="post" th:action="@{/login}" class="border p-4">
-
-    <div class="mb-3">
-        <label>Username</label>
-        <input name="username" class="form-control" required>
+      <div class="brand-title">
+        <div class="name">MyApp</div>
+        <div class="tag">Secure access • Cloud-ready</div>
+      </div>
     </div>
 
-    <div class="mb-3">
-        <label>Password</label>
-        <input name="password" type="password" class="form-control" required>
+    <div class="d-flex align-items-center gap-2">
+      <!-- theme toggle -->
+      <button id="themeToggle" class="btn btn-sm toggle-btn" aria-pressed="false" title="Toggle dark mode">
+        <i id="themeIcon" class="bi bi-moon-fill" style="font-size:1.0rem"></i>
+      </button>
     </div>
+  </header>
 
-    <button class="btn btn-primary">Login</button>
+  <!-- Main -->
+  <main class="auth-wrap" role="main">
+    <section class="auth-card" aria-labelledby="loginTitle">
+      <h1 id="loginTitle" class="h">Welcome back</h1>
+      <p class="lead muted">Log in to continue to your dashboard</p>
 
-</form>
-<div th:if="${param.registered}" class="alert alert-success">
-    Registration successful — you can now log in!
-</div>
+      <!-- registration success message -->
+      <div th:if="${param.registered}" class="alert alert-success">
+        Registration successful — you can now log in!
+      </div>
 
+      <!-- generic message -->
+      <div th:if="${message}" class="alert alert-success" role="status">
+        <span th:text="${message}"></span>
+      </div>
+
+      <!-- login form -->
+      <form method="post" th:action="@{/login}" novalidate autocomplete="on" id="loginForm">
+
+        <div class="form-floating mb-3">
+          <input name="username" id="username" class="form-control" placeholder="your.username" required autocomplete="username" />
+          <label for="username">Username</label>
+        </div>
+
+        <div class="form-floating mb-3 position-relative">
+          <input name="password" id="password" type="password" class="form-control" placeholder="Password" required autocomplete="current-password" />
+          <label for="password">Password</label>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2"
+                  aria-label="Show password" onclick="togglePassword('password', this)">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="remember" name="remember">
+            <label class="form-check-label small muted" for="remember">Remember me</label>
+          </div>
+          <a th:href="@{/forgot-password}" class="small link-like">Forgot?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 mb-2">Login</button>
+
+        <div class="text-center small muted">
+          Don't have an account?
+          <a th:href="@{/register}" class="link-like ms-1">Create one</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Theme handling: system preference + localStorage
+    (function(){
+      const root = document.documentElement;
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = stored || (prefersDark ? 'dark' : 'light');
+      if (initial === 'dark') document.documentElement.setAttribute('data-theme','dark');
+
+      const icon = document.getElementById('themeIcon');
+      function updateIcon(){
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        document.getElementById('themeToggle').setAttribute('aria-pressed', isDark);
+      }
+      updateIcon();
+
+      document.getElementById('themeToggle').addEventListener('click', ()=>{
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('theme','light');
+        } else {
+          document.documentElement.setAttribute('data-theme','dark');
+          localStorage.setItem('theme','dark');
+        }
+        updateIcon();
+      });
+    })();
+
+    // toggle password visibility
+    function togglePassword(id, btn){
+      const input = document.getElementById(id);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+      } else {
+        input.type = 'password';
+        btn.innerHTML = '<i class="bi bi-eye"></i>';
+      }
+    }
+
+    // small improvement: submit on enter (browser handles) + basic frontend validation
+    (function(){
+      const form = document.getElementById('loginForm');
+      form.addEventListener('submit', (e)=>{
+        // HTML5 required fields will handle; optionally add advanced checks here
+      });
+    })();
+  </script>
 </body>
 </html>
